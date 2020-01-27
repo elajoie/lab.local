@@ -1,0 +1,5 @@
+---
+# defaults file for unbound
+dns_server: 192.168.1.2
+subnet: 192.168.1.0/24
+

@@ -1,0 +1,9 @@
+---
+# defaults file for dhcp
+dns_server: 192.168.1.2
+subnet: 192.168.1.0
+mask: 255.255.255.0
+broadcast: 192.168.1.255
+dhcp_start: 192.168.1.100
+dhcp_end: 192.168.1.254
+route: 192.168.1.1

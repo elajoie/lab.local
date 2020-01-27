@@ -1,0 +1,17 @@
+---
+# tasks file for dhcp
+- name: Install dhcp service
+  dnf:
+    name: 'dhcp-server'
+    state: latest
+
+- name: Copy over configuration
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+
+- name: Start and enable service
+  service:
+    name: dhcpd
+    state: restarted
+    enabled: yes

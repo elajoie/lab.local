@@ -1,0 +1,13 @@
+---
+# tasks file for ntp
+- name: Add line to chrony config to allow local subnet to access service
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^allow'
+    line: allow {{ subnet }}
+
+- name: Restart chrony server and make sure its enabled
+  service:
+    name: chronyd
+    state: restarted
+    enabled: yes

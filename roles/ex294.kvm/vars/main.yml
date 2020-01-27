@@ -1,0 +1,9 @@
+---
+# vars file for ex294.kvm
+vms:
+  - { name: 'control', mac: '52:54:00:39:aa:c5' }
+  - { name: 'node1', mac: '52:54:00:39:ab:c5' }
+  - { name: 'node2', mac: '52:54:00:39:ac:c5' }
+  - { name: 'node3', mac: '52:54:00:39:ad:c5' }
+rhn_username: rhn-support-elajoie
+rhn_password: '{{ vault_rhn_password }}'

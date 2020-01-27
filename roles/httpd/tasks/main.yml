@@ -1,0 +1,29 @@
+---
+# tasks file for httpd
+# get the links for urls from here https://cloud.redhat.com/openshift/install/pre-release
+- name: Install apache
+  dnf:
+    name: httpd
+    state: latest
+
+- name: create ocp foler for apache
+  file:
+    path: /var/www/html/ocp
+    state: directory
+
+- name: Download OCP file into apache
+  get_url:
+    url: "{{ item.file }}"
+    dest: /var/www/html/ocp/{{ item.name }}
+  loop: "{{ files }}"
+
+- name: copy over treeinfo for booting
+  template:
+    src: .treeinfo.j2
+    dest: /var/www/html/ocp/.treeinfo
+
+- name: Started and enable httpd service
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes

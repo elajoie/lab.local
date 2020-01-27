@@ -1,0 +1,19 @@
+option domain-name     "{{ domain }}";
+option domain-name-servers     {{ dns_server }};
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+subnet {{ subnet }} netmask {{ mask }} {
+    range dynamic-bootp {{ dhcp_start }} {{ dhcp_end }};
+    option broadcast-address {{ broadcast }};
+    option routers {{ route }};
+}
+
+{% for item in named_hosts %}
+host {{ item.name }} {
+    option host-name        "{{ item.name }}.{{ domain }}";
+    hardware ethernet       {{ item.mac }};
+    fixed-address           {{ item.ip }};
+}
+
+{% endfor %}

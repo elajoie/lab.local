@@ -1,0 +1,42 @@
+---
+- include_vars: vault
+
+- name: install packages
+  dnf:
+    name: libguestfs-tools-c
+    state: latest 
+
+- name: copy over rhel qcow2 images
+  copy:
+    src: rhel.qcow2
+    dest: /var/lib/libvirt/images/{{ name0 }}.qcow2
+
+- name: customize VMs
+  command: virt-customize -a /var/lib/libvirt/images/{{ name0 }}.qcow2
+    --uninstall cloud-init
+    --ssh-inject root:file:/home/elajoie/.ssh/id_rsa.pub
+    --selinux-relabel
+    --sm-credentials "{{ rhn_username }}:password:{{ rhn_password }}"
+    --sm-register
+    --sm-attach auto
+    --install haproxy
+
+- name: deploy VMs
+  command: virt-install
+    --import
+    --name lb
+    --memory 1024
+    --vcpus 1
+    --cpu host
+    --network network=br0,mac={{ mac }}
+    --noreboot
+    --disk /var/lib/libvirt/images/{{ name0 }}.qcow2
+    --noautoconsole
+
+- name: copy over haproxy configuration
+  template:
+    src: haproxy.conf.j2
+    dest: /etc/haproxy/haproxy.cfg
+  notify:
+    - restart haproxy
+

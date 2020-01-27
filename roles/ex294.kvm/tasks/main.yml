@@ -1,0 +1,49 @@
+---
+# tasks file for ex294.kvm
+- include_vars: vault
+
+- name: install packages
+  dnf:
+    name: libguestfs-tools-c
+    state: latest 
+
+- name: Create volumes
+  command: qemu-img create -f qcow2 /var/lib/libvirt/images/{{ item.name }}2.qcow2 10G
+  loop: "{{ vms }}"
+
+- name: copy over rhel qcow2 images
+  copy:
+    src: rhel.qcow2
+    dest: /var/lib/libvirt/images/{{ item.name }}.qcow2
+  loop: "{{ vms }}"
+
+#- name: Copy your users public ssh key to kvm host
+#  copy:
+#    src: id_rsa.pub
+#    dest: /root/id_rsa.pub
+
+- name: customize VMs
+  command: virt-customize -a /var/lib/libvirt/images/{{ item.name }}.qcow2
+    --uninstall cloud-init
+    --ssh-inject root:file:/home/elajoie/.ssh/id_rsa.pub
+    --selinux-relabel
+    --sm-credentials "{{ rhn_username }}:password:{{ rhn_password }}"
+    --sm-register
+    --sm-attach auto
+    --run-command 'subscription-manager repos --enable ansible-2-for-rhel-8-x86_64-rpms'
+    --install ansible
+  loop: "{{ vms }}"
+
+- name: deploy VMs
+  command: virt-install
+    --import
+    --name "{{ item.name }}"
+    --memory 1024
+    --vcpus 1
+    --cpu host
+    --network network=br0,mac={{ item.mac }}
+    --noreboot
+    --disk /var/lib/libvirt/images/{{ item.name }}.qcow2
+    --disk /var/lib/libvirt/images/{{ item.name }}2.qcow2
+    --noautoconsole
+  loop: "{{ vms }}"

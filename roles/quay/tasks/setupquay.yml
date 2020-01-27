@@ -1,0 +1,19 @@
+- name: Download quay image
+  podman_image:
+    name: quay.io/redhat/quay
+    tag: v3.2.0
+    username: redhat+quay
+    password: O81WSHRSJR14UAZBK54GQHJS0P1V4CLWAJV1X2C4SD7KO59CQ9N3RE12612XU1HR
+
+- name: Build and run quay
+  command: podman run
+    --detach
+    --restart always
+    --name quay
+    --sysctl "net.core.somaxconn=4096"
+    --publish 443:8443
+    --publish 80:8080
+    --privileged=true
+    --volume /opt/registry/quay:/conf/stack
+    --volume /opt/registry/data:/datastorage
+    quay.io/redhat/quay:v3.2.0

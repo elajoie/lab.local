@@ -1,0 +1,38 @@
+---
+# tasks file for unbound
+- name: Install unbound
+  dnf:
+    name: unbound
+    state: latest
+
+- name: Download root.hints
+  get_url:
+    url: https://www.internic.net/domain/named.root
+    dest: /etc/unbound/root.hints
+
+- name: Replace root key with our own
+  copy:
+    content: ". IN DS 19036 8 2 49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5\n. IN DS 20326 8 2 E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D"
+    dest: /etc/unbound/root.key
+    owner: unbound
+    group: unbound
+
+- name: Copy over add blocking list
+  uri:
+    url: "http://pgl.yoyo.org/adservers/serverlist.php?hostformat=unbound&showintro=0&mimetype=plaintext"
+    follow_redirects: all
+    dest: /etc/unbound/unbound_ad_servers
+
+- name: Copy over config
+  template:
+    src: unbound.conf.j2
+    dest: /etc/unbound/unbound.conf
+
+- name: restart and enable unbound service
+  service:
+    name: unbound
+    state: restarted
+    enabled: yes
+
+
+

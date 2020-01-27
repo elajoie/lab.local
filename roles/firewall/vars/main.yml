@@ -1,0 +1,15 @@
+---
+# vars file for firewall
+services:
+  - http
+  - https
+  - dhcp
+  - dns
+  - ntp
+
+ports:
+  - 5000/tcp
+  - 3306/tcp
+  - 6379/tcp
+  - 8443/tcp
+  - 8080/tcp

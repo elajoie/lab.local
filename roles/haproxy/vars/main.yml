@@ -1,0 +1,4 @@
+name0: lb
+mac: 52:54:00:39:3c:c5
+rhn_username: rhn-support-elajoie
+rhn_password: '{{ vault_rhn_password }}'

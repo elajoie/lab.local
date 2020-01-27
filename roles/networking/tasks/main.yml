@@ -1,0 +1,47 @@
+---
+# tasks file for networking
+- name: Install libvirt
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ pkg }}"
+
+- name: Start libvirt service
+  service:
+    name: libvirtd
+    state: started
+
+- name: Destroy default network
+  virt_net:
+    command: destroy
+    name: default
+  ignore_errors: True
+
+- name: Undefine default network
+  virt_net:
+    command: undefine
+    name: default
+  ignore_errors: True
+
+- name: Define bridge
+  virt_net:
+    command: define
+    name: br0
+    xml: bridge.xml
+
+- name: Create br0
+  virt_net:
+    command: create
+    name: br0
+
+- name: Activate br0
+  virt_net:
+    state: active
+    name: br0
+
+- name: Make br0 autostart
+  virt_net:
+    autostart: yes
+    name: br0
+
+

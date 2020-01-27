@@ -1,0 +1,87 @@
+# Created from this link: https://blog.openshift.com/openshift-4-2-disconnected-install/
+- name: Install missing packages for quay
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+
+- name: Create folders for quay
+  file:
+    path: "/opt/registry/{{ item }}"
+    state: directory
+    mode: '0777'
+  with_items: "{{ folders }}"
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
+  openssl_privatekey:
+    path: /opt/registry/certs/lab.local.key
+
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+    path: /opt/registry/certs/gw.lab.local.csr
+    privatekey_path: /opt/registry/certs/lab.local.key
+    common_name: gw.lab.local
+
+- name: Create WWW certificate
+  openssl_certificate:
+    path: /opt/registry/certs/lab.local.crt
+    privatekey_path: /opt/registry/certs/lab.local.key
+    csr_path: /opt/registry/certs/gw.lab.local.csr
+    provider: selfsigned
+
+# Add a user to a password file
+- htpasswd:
+    path: /opt/registry/auth/htpasswd
+    name: redhat
+    password: 'redhat'
+
+- name: Give cert the right permissions
+  file:
+    path: '/opt/registry/certs/{{ item }}'
+    mode: '0777'
+  with_items: "{{ certs }}"
+
+- name: Copy over quay config
+  template:
+    src: config.yaml.j2
+    dest: /opt/registry/quay/config.yaml
+    mode: '0777'
+
+- name: Dangerous for multi use envirnment
+  command: podman stop --all
+
+- name: Remove all containers
+  command: podman rm --all --force
+
+- name: Download mysql image
+  podman_image:
+    name: registry.access.redhat.com/rhscl/mysql-57-rhel7
+    username: "{{ rhn_username }}"
+    password: "{{ rhn_password }}"
+
+- name: Download redis image
+  podman_image:
+    name: registry.redhat.io/rhel8/redis-5
+    username: "{{ rhn_username }}"
+    password: "{{ rhn_password }}"
+
+- name: Build and run MySQL DB
+  command: podman run
+    --detach
+    --restart always
+    --env MYSQL_ROOT_PASSWORD={{ MYSQL_ROOT_PASSWORD }}
+    --env MYSQL_USER={{ MYSQL_USER }}
+    --env MYSQL_PASSWORD={{ MYSQL_PASSWORD }}
+    --env MYSQL_DATABASE={{ MYSQL_DATABASE }}
+    --name {{ MYSQL_CONTAINER_NAME }}
+    --publish 3306:3306
+    --volume /opt/registry/mysql:/var/lib/mysql/data:z
+    registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+- name: Build and run redis
+  command: podman run
+    --detach
+    --restart always
+    --name redis
+    --publish 6379:6379
+    --volume /opt/registry/redis:/var/lib/redis/data:z
+    rhel8/redis-5

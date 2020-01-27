@@ -1,0 +1,111 @@
+server:
+        verbosity: 1
+        statistics-interval: 0
+        statistics-cumulative: no
+        extended-statistics: yes
+        num-threads: 4
+        interface-automatic: no
+        interface: {{ dns_server }}
+        port: 53
+        do-ip4: yes
+        do-ip6: no
+        do-udp: yes
+        do-tcp: yes
+        access-control: {{ subnet }} allow
+        root-hints: "/etc/unbound/root.hints"
+        hide-identity: yes
+        hide-version: yes
+        use-caps-for-id: yes
+        cache-min-ttl: 3600
+        cache-max-ttl: 86400
+        prefetch: yes
+        num-threads: 4
+        msg-cache-slabs: 8
+        rrset-cache-slabs: 8
+        infra-cache-slabs: 8
+        key-cache-slabs: 8
+        msg-cache-size: 128m
+        so-rcvbuf: 1m
+        private-address: 192.168.0.0/16
+        private-address: 172.16.0.0/12
+        private-address: 10.0.0.0/8
+        private-domain: "{{ domain }}"
+        unwanted-reply-threshold: 10000
+        do-not-query-localhost: no
+        val-clean-additional: yes
+        local-zone: "{{ domain }}." static
+        local-zone: "apps.{{ domain }}" redirect
+
+{% for item in named_hosts %}
+        local-data: "{{ item.name }}.{{ domain }} IN A {{ item.ip }}"
+{% endfor %}
+{% for item in named_hosts if item.name2 is defined %}
+        local-data: "{{ item.name2 }}.{{ domain }} IN A {{ item.ip }}"
+        local-data: "_etcd-server-ssl._tcp.lab.local 3600 IN SRV 0 10 2380 {{ item.name2 }}.{{ domain }}"
+{% endfor %}
+{% for item in named_hosts if item.name3 is defined %}
+        local-data: "{{ item.name3 }}.{{ domain }} IN A {{ item.ip }}"
+{% endfor %}
+{% for item in named_hosts if item.name4 is defined %}
+        local-data: "{{ item.name4 }}.{{ domain }} IN A {{ item.ip }}"
+{% endfor %}
+{% for item in named_hosts if item.name5 is defined %}
+        local-data: "{{ item.name5 }}.{{ domain }} IN A {{ item.ip }}"
+{% endfor %}
+
+{% for item in named_hosts %}
+        local-data-ptr: "{{ item.ip }}  {{ item.name }}.{{ domain }}"
+{% endfor %}
+
+        include: /etc/unbound/unbound_ad_servers
+        outgoing-port-permit: 32768-60999
+        outgoing-port-avoid: 0-32767
+        so-reuseport: yes
+        ip-transparent: yes
+        max-udp-size: 3072
+        chroot: ""
+        username: "unbound"
+        directory: "/etc/unbound"
+        log-time-ascii: yes
+        pidfile: "/var/run/unbound/unbound.pid"
+        harden-glue: yes
+        harden-dnssec-stripped: yes
+        harden-below-nxdomain: yes
+        harden-referral-path: yes
+        qname-minimisation: yes
+        aggressive-nsec: yes
+        unwanted-reply-threshold: 10000000
+        prefetch: yes
+        prefetch-key: yes
+        rrset-roundrobin: yes
+        minimal-responses: yes
+        module-config: "ipsecmod validator iterator"
+        trust-anchor-signaling: yes
+        root-key-sentinel: yes
+        trusted-keys-file: /etc/unbound/keys.d/*.key
+        trust-anchor-file: "/etc/unbound/root.key"
+        val-clean-additional: yes
+        val-permissive-mode: no
+        serve-expired: yes
+        val-log-level: 1
+        ipsecmod-enabled: no
+        ipsecmod-hook:/usr/libexec/ipsec/_unbound-hook
+
+   forward-zone:
+      name: "."
+      forward-addr: 8.8.4.4        # Google
+      forward-addr: 8.8.8.8        # Google
+      forward-addr: 37.235.1.174   # FreeDNS
+      forward-addr: 37.235.1.177   # FreeDNS
+      forward-addr: 50.116.23.211  # OpenNIC
+      forward-addr: 64.6.64.6      # Verisign
+      forward-addr: 64.6.65.6      # Verisign
+      forward-addr: 74.82.42.42    # Hurricane Electric
+      forward-addr: 84.200.69.80   # DNS Watch
+      forward-addr: 84.200.70.40   # DNS Watch
+      forward-addr: 91.239.100.100 # censurfridns.dk
+      forward-addr: 109.69.8.51    # puntCAT
+      forward-addr: 208.67.222.220 # OpenDNS
+      forward-addr: 208.67.222.222 # OpenDNS
+      forward-addr: 216.146.35.35  # Dyn Public
+      forward-addr: 216.146.36.36  # Dyn Public

@@ -1,0 +1,19 @@
+---
+# tasks file for firewall
+- name: setup firewall rules - services
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"
+
+- name: setup firewall rules - ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ ports }}"
