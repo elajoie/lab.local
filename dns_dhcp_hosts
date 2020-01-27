@@ -1,0 +1,46 @@
+named_hosts:
+  - name: gw
+    mac: 10:7b:44:91:a2:7c
+    ip: 192.168.1.2
+  - name: bootstrap
+    mac: 52:54:00:39:2c:c5
+    ip: 192.168.1.10
+  - name: lb
+    name3: apps
+    name4: api
+    name5: api-int
+    mac: 52:54:00:39:3c:c5
+    ip: 192.168.1.11
+  - name: master-1
+    name2: etcd-0
+    mac: 52:54:00:39:4c:c5
+    ip: 192.168.1.12
+  - name: master-2
+    name2: etcd-1
+    mac: 52:54:00:39:5c:c5
+    ip: 192.168.1.13
+  - name: master-3
+    name2: etcd-2
+    mac: 52:54:00:39:6c:c5
+    ip: 192.168.1.14
+  - name: worker-1
+    mac: 52:54:00:39:7c:c5
+    ip: 192.168.1.15
+  - name: worker-2
+    mac: 52:54:00:39:8c:c5
+    ip: 192.168.1.16
+  - name: nas1
+    mac: 10:bf:48:8c:cb:32
+    ip: 192.168.1.20
+  - name: control
+    mac: 52:54:00:39:aa:c5
+    ip: 192.168.1.50
+  - name: node1
+    mac: 52:54:00:39:ab:c5
+    ip: 192.168.1.51
+  - name: node2
+    mac: 52:54:00:39:ac:c5
+    ip: 192.168.1.52
+  - name: node3
+    mac: 52:54:00:39:ad:c5
+    ip: 192.168.1.53
