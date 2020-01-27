@@ -3,9 +3,7 @@
   hosts: localhost
   vars_files:
     - vault
-  vars:
-    - rhn_username: rhn-support-elajoie
-    - rhn_password: "{{ vault_rhn_password }}"
+    - play_vars
   roles:
     - firewall
     - quay
