@@ -1,0 +1,11 @@
+---
+- name: Base Setup
+  hosts: localhost
+  vars_files:
+    - vault
+  vars:
+    - rhn_username: rhn-support-elajoie
+    - rhn_password: "{{ vault_rhn_password }}"
+  roles:
+    - firewall
+    - quay
