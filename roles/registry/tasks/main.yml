@@ -1,0 +1,68 @@
+---
+# tasks file for registry
+# https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html#installing-restricted-networks-preparations
+- name: Install missing packages for offline registry
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+
+- name: Create folders for registry
+  file:
+    path: "{{ base_folder }}{{ item }}"
+    state: directory
+    mode: '0664'
+  with_items: "{{ folders }}"
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
+  openssl_privatekey:
+    path: "{{ base_folder }}certs/{{ domain_name }}.key"
+
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+    path: "{{ base_folder }}certs/{{ registry_host }}.{{ domain_name }}.csr"
+    privatekey_path: "{{ base_folder }}certs/{{ domain_name }}.key"
+    common_name: "{{ registry_host }}.{{ domain_name }}"
+
+- name: Create WWW certificate
+  openssl_certificate:
+    path: "{{ base_folder }}certs/{{ domain_name }}.crt"
+    privatekey_path: "{{ base_folder }}certs/{{ domain_name }}.key"
+    csr_path: "{{ base_folder }}certs/{{ registry_host }}.{{ domain_name }}.csr"
+    provider: selfsigned
+
+# Add a user to a password file
+- htpasswd:
+    path: "{{ base_folder }}/auth/htpasswd"
+    crypt_scheme: bcrypt
+    name: redhat
+    password: redhat
+
+- name: Copy cert to trusted folder
+  copy:
+    src: "{{ base_folder }}certs/{{ domain_name }}.crt"
+    dest: "/etc/pki/ca-trust/source/anchors/{{ domain_name }}.crt"
+    remote_src: yes
+    mode: '0644'
+
+- name: Update ca trust
+  command: update-ca-trust
+
+- name: Remove all containers
+  command: podman rm --all --force
+
+- name: Build and start registry
+  command: podman run
+    --detach
+    --restart always
+    --name mirror-registry
+    --publish 5000:5000
+    --volume {{ base_folder }}data:/var/lib/registry:z
+    --volume {{ base_folder }}auth:/auth:z
+    --volume {{ base_folder }}certs:/certs:z
+    --env REGISTRY_HTTP_SECRET=redhat
+    --env REGISTRY_AUTH=htpasswd
+    --env REGISTRY_AUTH_HTPASSWD_REALM=redhat
+    --env REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+    --env REGISTRY_HTTP_TLS_CERTIFICATE=/certs/{{ domain_name }}.crt
+    --env REGISTRY_HTTP_TLS_KEY=/certs/{{ domain_name }}.key
+    docker.io/library/registry:2

@@ -2,8 +2,8 @@
 - name: Base Setup
   hosts: localhost
   vars_files:
-    - vault
-    - play_vars
+#    - vault
+    - play_vars.yml
   roles:
     - firewall
-    - quay
+    - registry
