@@ -3,13 +3,9 @@
 services:
   - http
   - https
-  - dhcp
   - dns
   - ntp
 
+#5000 is the regisrty
 ports:
   - 5000/tcp
-  - 3306/tcp
-  - 6379/tcp
-  - 8443/tcp
-  - 8080/tcp

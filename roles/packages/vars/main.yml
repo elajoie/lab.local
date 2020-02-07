@@ -1,7 +1,6 @@
 ---
 # vars file for packages
 packages:
-  - rhel-system-roles
   - virt-manager
   - virt-install
   - virt-viewer

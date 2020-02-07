@@ -1,0 +1,7 @@
+---
+# tasks file for bastion_packages
+- name: Install required Packages
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ packages }}"

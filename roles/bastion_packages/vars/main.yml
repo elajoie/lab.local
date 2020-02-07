@@ -1,0 +1,4 @@
+---
+# vars file for bastion_packages
+packages:
+  - rhel-system-roles

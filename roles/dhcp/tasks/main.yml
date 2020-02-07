@@ -2,8 +2,17 @@
 # tasks file for dhcp
 - name: Install dhcp service
   dnf:
-    name: 'dhcp-server'
+    name: dhcp-server
     state: latest
+
+- name: setup firewall rules - services
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"
 
 - name: Copy over configuration
   template:
