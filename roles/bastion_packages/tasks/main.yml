@@ -5,3 +5,29 @@
     name: "{{ item }}"
     state: latest
   loop: "{{ packages }}"
+
+- name: Remove old ssh keys before creating new VMs
+  lineinfile:
+    path: "~/.ssh/known_hosts"
+    regexp: ".*{{ item.name }}.*"
+    state: absent
+  with_items:
+  - "{{ named_hosts }}"
+
+- name: Download files
+  get_url:
+    url: "{{ base_url }}/{{ item.file }}"
+    dest: /tmp/
+  with_items: "{{ files }}"
+
+- name: Setup directory listed in environment PATH variable
+  file:
+    path: "/usr/local/bin"
+    state: directory
+    mode: '0755'
+- name: extract client and installer
+  unarchive:
+    src: "/tmp/{{ item.file }}"
+    dest: "/usr/local/bin"
+    remote_src: yes
+  with_items: "{{ files }}"

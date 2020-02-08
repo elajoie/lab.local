@@ -1,13 +1,5 @@
 ---
 # defaults file for httpd
-files:
-  - file: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-43.81.201912030353.0-installer-kernel-x86_64
-    name: vmlinuz
-  - file: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-43.81.201912030353.0-installer-initramfs.x86_64.img
-    name: initramfs.img
-  - file: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-43.81.201912030353.0-metal.x86_64.raw.gz
-    name: rhcos-metal.x86_64.raw.gz
-
 container_name: httpd-24
 container_image: rhel8/httpd-24
 container_run_args: "--detach --restart always --publish 8080:8080 --volume /opt/registry/www:/var/www:z"

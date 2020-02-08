@@ -1,0 +1,23 @@
+apiVersion: v1
+baseDomain: local
+compute:
+- hyperthreading: Disabled
+  name: worker
+  replicas: 0
+controlPlane:
+  hyperthreading: Disabled
+  name: master
+  replicas: 3
+metadata:
+  name: lab
+networking:
+  clusterNetworks:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: '$(cat /root/ocp/pull-secret)'
+sshKey: '$(cat /root/.ssh/id_rsa.pub)'

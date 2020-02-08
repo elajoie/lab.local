@@ -1,21 +1,24 @@
 ---
 - name: Bastion Setup (basically install the roles for rhel-system)
   hosts: bastion
+  vars_files:
+    - vm_data.yml
   roles:
     - bastion_packages
 
-- name: KVM Setup
-  hosts: kvm
-  vars_files:
-    - vault
-    - play_vars.yml
-    - rhel-system-roles-networking.yml
-    - vm_data.yml
-  roles:
+#- name: KVM Setup
+#  hosts: kvm
+#  vars_files:
+#    - vault
+#    - play_vars.yml
+#    - rhel-system-roles-networking.yml
+#    - vm_data.yml
+#  roles:
 #    - packages
 #    - rhel-system-roles.network
 #    - networking
 #    - dhcp
 #    - unbound
 #    - ntp
-    - httpd
+#    - httpd
+#    - rhcos
