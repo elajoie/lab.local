@@ -34,17 +34,22 @@
     zone: public
   with_items: "{{ ports }}"
 
-- name: Dangerous for multi use envirnment
-  command: podman stop --all
+- name: "create systemd service file for container: {{ container_name }}"
+  template:
+    src: systemd-service-single.j2
+    dest: "{{ service_files_dir }}/{{ service_name }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemctl
 
-- name: Remove all containers
-  command: podman rm --all --force
+- name: ensure "{{ service_name }}" is enabled at boot, and systemd reloaded
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+    daemon_reload: yes
 
-- name: Build and run httpd
-  command: podman run
-    --detach
-    --restart always
-    --name httpd
-    --publish 8080:8080
-    --volume /opt/registry/www:/var/www:z
-    rhel8/httpd-24
+- name: ensure "{{ service_name }}" is running
+  service:
+    name: "{{ service_name }}"
+    state: started

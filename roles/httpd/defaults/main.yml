@@ -7,3 +7,21 @@ files:
     name: initramfs.img
   - file: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-43.81.201912030353.0-metal.x86_64.raw.gz
     name: rhcos-metal.x86_64.raw.gz
+
+container_name: httpd-24
+container_image: rhel8/httpd-24
+container_run_args: "--detach --restart always --publish 8080:8080 --volume /opt/registry/www:/var/www:z"
+
+container_state: running
+
+# systemd service name
+service_name: "{{ container_name }}-container-pod.service"
+
+# SystemD restart policy
+# see man systemd.service for info
+# by default we want to restart failed container
+container_restart: on-failure
+service_files_dir: /etc/systemd/system
+systemd_TimeoutStartSec: 15
+systemd_RestartSec: 30
+container_run_as_user: root
