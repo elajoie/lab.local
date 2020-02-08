@@ -9,7 +9,13 @@
   vars_files:
     - vault
     - play_vars.yml
+    - rhel-system-roles-networking.yml
+    - vm_data.yml
   roles:
-    - packages
-    - firewall
-    - registry
+#    - packages
+#    - rhel-system-roles.network
+#    - networking
+#    - dhcp
+#    - unbound
+#    - ntp
+    - httpd

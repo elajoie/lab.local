@@ -1,2 +1,8 @@
 ---
 # vars file for httpd
+services:
+  - http
+  - https
+
+ports:
+  - 8080/tcp

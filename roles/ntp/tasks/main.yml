@@ -11,3 +11,12 @@
     name: chronyd
     state: restarted
     enabled: yes
+
+- name: setup firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"

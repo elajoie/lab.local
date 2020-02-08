@@ -1,4 +1,4 @@
-option domain-name     "{{ domain }}";
+option domain-name     "{{ domain_name }}";
 option domain-name-servers     {{ dns_server }};
 default-lease-time 600;
 max-lease-time 7200;
@@ -11,7 +11,7 @@ subnet {{ subnet }} netmask {{ mask }} {
 
 {% for item in named_hosts %}
 host {{ item.name }} {
-    option host-name        "{{ item.name }}.{{ domain }}";
+    option host-name        "{{ item.name }}.{{ domain_name }}";
     hardware ethernet       {{ item.mac }};
     fixed-address           {{ item.ip }};
 }

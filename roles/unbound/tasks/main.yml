@@ -5,6 +5,15 @@
     name: unbound
     state: latest
 
+- name: setup firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"
+
 - name: Download root.hints
   get_url:
     url: https://www.internic.net/domain/named.root
@@ -33,6 +42,3 @@
     name: unbound
     state: restarted
     enabled: yes
-
-
-

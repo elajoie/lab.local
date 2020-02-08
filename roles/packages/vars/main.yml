@@ -4,3 +4,4 @@ packages:
   - virt-manager
   - virt-install
   - virt-viewer
+  - podman

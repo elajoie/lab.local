@@ -1,5 +1,5 @@
 [kvm]
-gw.lab.local ansible_host=192.168.1.2 mac=10:7b:44:91:a2:7c
+gw.lab.local ansible_host=192.168.1.2
 
 [bastion]
-gw.lab.local ansible_host=192.168.1.2
+laptop.lab.local ansible_host=192.168.1.3

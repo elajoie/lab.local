@@ -27,7 +27,7 @@
   virt_net:
     command: define
     name: br0
-    xml: bridge.xml
+    xml: "{{ lookup('template', 'bridge.xml.j2') }}"
 
 - name: Create br0
   virt_net:
@@ -43,5 +43,3 @@
   virt_net:
     autostart: yes
     name: br0
-
-

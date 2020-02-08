@@ -1,29 +1,50 @@
 ---
 # tasks file for httpd
-# get the links for urls from here https://cloud.redhat.com/openshift/install/pre-release
-- name: Install apache
-  dnf:
-    name: httpd
-    state: latest
+- name: Login to registry as podman_image seems to not do this properly
+  command: podman login
+    --username "{{ rhn_username }}"
+    --password "{{ rhn_password }}"
+    registry.redhat.io
 
-- name: create ocp foler for apache
+- name: Download httpd image
+  podman_image:
+    name: registry.redhat.io/rhel8/httpd-24
+
+- name: Create folder for httpd
   file:
-    path: /var/www/html/ocp
+    path: /opt/registry/www/html
     state: directory
+    mode: '0775'
 
-- name: Download OCP file into apache
-  get_url:
-    url: "{{ item.file }}"
-    dest: /var/www/html/ocp/{{ item.name }}
-  loop: "{{ files }}"
+- name: setup firewall rules - services
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"
 
-- name: copy over treeinfo for booting
-  template:
-    src: .treeinfo.j2
-    dest: /var/www/html/ocp/.treeinfo
+- name: setup firewall rules - ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ ports }}"
 
-- name: Started and enable httpd service
-  service:
-    name: httpd
-    state: restarted
-    enabled: yes
+- name: Dangerous for multi use envirnment
+  command: podman stop --all
+
+- name: Remove all containers
+  command: podman rm --all --force
+
+- name: Build and run httpd
+  command: podman run
+    --detach
+    --restart always
+    --name httpd
+    --publish 8080:8080
+    --volume /opt/registry/www:/var/www:z
+    rhel8/httpd-24

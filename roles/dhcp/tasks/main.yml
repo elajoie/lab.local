@@ -5,7 +5,7 @@
     name: dhcp-server
     state: latest
 
-- name: setup firewall rules - services
+- name: setup firewall
   firewalld:
     service: "{{ item }}"
     permanent: yes

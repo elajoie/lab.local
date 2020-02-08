@@ -29,32 +29,32 @@ server:
         private-address: 192.168.0.0/16
         private-address: 172.16.0.0/12
         private-address: 10.0.0.0/8
-        private-domain: "{{ domain }}"
+        private-domain: "{{ domain_name }}"
         unwanted-reply-threshold: 10000
         do-not-query-localhost: no
         val-clean-additional: yes
-        local-zone: "{{ domain }}." static
-        local-zone: "apps.{{ domain }}" redirect
+        local-zone: "{{ domain_name }}." static
+        local-zone: "apps.{{ domain_name }}" redirect
 
 {% for item in named_hosts %}
-        local-data: "{{ item.name }}.{{ domain }} IN A {{ item.ip }}"
+        local-data: "{{ item.name }}.{{ domain_name }} IN A {{ item.ip }}"
 {% endfor %}
 {% for item in named_hosts if item.name2 is defined %}
-        local-data: "{{ item.name2 }}.{{ domain }} IN A {{ item.ip }}"
-        local-data: "_etcd-server-ssl._tcp.lab.local 3600 IN SRV 0 10 2380 {{ item.name2 }}.{{ domain }}"
+        local-data: "{{ item.name2 }}.{{ domain_name }} IN A {{ item.ip }}"
+        local-data: "_etcd-server-ssl._tcp.lab.local 3600 IN SRV 0 10 2380 {{ item.name2 }}.{{ domain_name }}"
 {% endfor %}
 {% for item in named_hosts if item.name3 is defined %}
-        local-data: "{{ item.name3 }}.{{ domain }} IN A {{ item.ip }}"
+        local-data: "{{ item.name3 }}.{{ domain_name }} IN A {{ item.ip }}"
 {% endfor %}
 {% for item in named_hosts if item.name4 is defined %}
-        local-data: "{{ item.name4 }}.{{ domain }} IN A {{ item.ip }}"
+        local-data: "{{ item.name4 }}.{{ domain_name }} IN A {{ item.ip }}"
 {% endfor %}
 {% for item in named_hosts if item.name5 is defined %}
-        local-data: "{{ item.name5 }}.{{ domain }} IN A {{ item.ip }}"
+        local-data: "{{ item.name5 }}.{{ domain_name }} IN A {{ item.ip }}"
 {% endfor %}
 
 {% for item in named_hosts %}
-        local-data-ptr: "{{ item.ip }}  {{ item.name }}.{{ domain }}"
+        local-data-ptr: "{{ item.ip }}  {{ item.name }}.{{ domain_name }}"
 {% endfor %}
 
         include: /etc/unbound/unbound_ad_servers
