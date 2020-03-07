@@ -36,25 +36,23 @@ server:
         local-zone: "{{ domain_name }}." static
         local-zone: "apps.{{ domain_name }}" redirect
 
-{% for item in named_hosts %}
-        local-data: "{{ item.name }}.{{ domain_name }} IN A {{ item.ip }}"
-{% endfor %}
-{% for item in named_hosts if item.name2 is defined %}
-        local-data: "{{ item.name2 }}.{{ domain_name }} IN A {{ item.ip }}"
-        local-data: "_etcd-server-ssl._tcp.lab.local 3600 IN SRV 0 10 2380 {{ item.name2 }}.{{ domain_name }}"
-{% endfor %}
-{% for item in named_hosts if item.name3 is defined %}
-        local-data: "{{ item.name3 }}.{{ domain_name }} IN A {{ item.ip }}"
-{% endfor %}
-{% for item in named_hosts if item.name4 is defined %}
-        local-data: "{{ item.name4 }}.{{ domain_name }} IN A {{ item.ip }}"
-{% endfor %}
-{% for item in named_hosts if item.name5 is defined %}
-        local-data: "{{ item.name5 }}.{{ domain_name }} IN A {{ item.ip }}"
+{% for host in groups['all'] %}
+        local-data: "{{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
 {% endfor %}
 
-{% for item in named_hosts %}
-        local-data-ptr: "{{ item.ip }}  {{ item.name }}.{{ domain_name }}"
+{% for host in groups['ocp'] if etcd_node == true %}
+        local-data: "etcd-{{ loop.index0 }}.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
+        local-data: "_etcd-server-ssl._tcp.{{ domain_name }} 3600 IN SRV 0 10 2380 etcd-{{ loop.index0 }}.{{ domain_name }}"
+{% endfor %}
+
+{% for host in groups['ocp'] if hostvars[host]['inventory_hostname'] == 'lb' %}
+        local-data: "apps.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
+        local-data: "api-int.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
+        local-data: "api.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
+{% endfor %}
+
+{% for host in groups['all'] %}
+        local-data-ptr: "{{ hostvars[host]['ansible_host'] }}  {{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}"
 {% endfor %}
 
         include: /etc/unbound/unbound_ad_servers
