@@ -1,3 +1,1 @@
 domain_name: lab.local
-rhn_username: rhn-support-elajoie
-rhn_password: "{{ vault_rhn_password }}"
