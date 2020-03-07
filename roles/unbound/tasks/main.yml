@@ -1,8 +1,8 @@
 ---
 # tasks file for unbound
-- name: Install unbound
+- name: Install unbound and require packages
   dnf:
-    name: unbound
+    name: "{{ packages }}"
     state: latest
 
 - name: setup firewall
@@ -36,9 +36,4 @@
   template:
     src: unbound.conf.j2
     dest: /etc/unbound/unbound.conf
-
-- name: restart and enable unbound service
-  service:
-    name: unbound
-    state: restarted
-    enabled: yes
+  notify: restart unbound

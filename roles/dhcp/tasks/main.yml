@@ -1,8 +1,8 @@
 ---
 # tasks file for dhcp
-- name: Install dhcp service
+- name: Install dhcp service plus dependencies
   dnf:
-    name: dhcp-server
+    name: "{{ packages }}"
     state: latest
 
 - name: setup firewall
@@ -18,9 +18,4 @@
   template:
     src: dhcpd.conf.j2
     dest: /etc/dhcp/dhcpd.conf
-
-- name: Start and enable service
-  service:
-    name: dhcpd
-    state: restarted
-    enabled: yes
+  notify: restart dhcpd

@@ -1,5 +1,7 @@
 ---
-- hosts: localhost
-  remote_user: root
+- name: Bastion Setup
+  hosts: bastion
+  vars_files:
+    - play_vars.yml
   roles:
     - unbound

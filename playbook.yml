@@ -5,6 +5,7 @@
     - play_vars.yml
   roles:
     - unbound
+    - dhcp
 
 #- name: KVM Setup
 #  hosts: kvm

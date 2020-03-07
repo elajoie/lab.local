@@ -1,5 +1,3 @@
 ---
 # defaults file for unbound
-dns_server: 192.168.1.2
-subnet: 192.168.1.0/24
-
+net_mask: '{{ ansible_default_ipv4["network"] }}/{{ ansible_default_ipv4["netmask"] }}'

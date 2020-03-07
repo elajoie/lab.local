@@ -1,19 +1,19 @@
 option domain-name     "{{ domain_name }}";
-option domain-name-servers     {{ dns_server }};
+option domain-name-servers     {{ ansible_default_ipv4["address"] }};
 default-lease-time 600;
 max-lease-time 7200;
 authoritative;
-subnet {{ subnet }} netmask {{ mask }} {
-    range dynamic-bootp {{ dhcp_start }} {{ dhcp_end }};
-    option broadcast-address {{ broadcast }};
-    option routers {{ route }};
+subnet {{ ansible_default_ipv4["network"] }} netmask {{ ansible_default_ipv4["netmask"] }} {
+    range dynamic-bootp {{ ansible_default_ipv4["network"] | ipmath(100) }} {{ ansible_default_ipv4["network"] | ipmath(254) }};
+    option broadcast-address {{ ansible_default_ipv4["broadcast"] }};
+    option routers {{ ansible_default_ipv4["gateway"] }};
 }
 
-{% for item in named_hosts %}
-host {{ item.name }} {
-    option host-name        "{{ item.name }}.{{ domain_name }}";
-    hardware ethernet       {{ item.mac }};
-    fixed-address           {{ item.ip }};
+{% for host in groups['all'] %}
+host {{ hostvars[host]['inventory_hostname'] }} {
+    option host-name        "{{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}";
+    hardware ethernet       {{ hostvars[host]['ethernet'] }};
+    fixed-address           {{ hostvars[host]['ansible_host'] }};
 }
 
 {% endfor %}

@@ -5,13 +5,13 @@ server:
         extended-statistics: yes
         num-threads: 4
         interface-automatic: no
-        interface: {{ dns_server }}
+        interface: {{ ansible_default_ipv4["address"] }}
         port: 53
         do-ip4: yes
         do-ip6: no
         do-udp: yes
         do-tcp: yes
-        access-control: {{ subnet }} allow
+        access-control: {{ net_mask | ipaddr("net") }} allow
         root-hints: "/etc/unbound/root.hints"
         hide-identity: yes
         hide-version: yes
@@ -40,7 +40,7 @@ server:
         local-data: "{{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
 {% endfor %}
 
-{% for host in groups['ocp'] if etcd_node == true %}
+{% for host in groups['ocp'] if hostvars[host]['etcd_node'] == 'true' %}
         local-data: "etcd-{{ loop.index0 }}.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
         local-data: "_etcd-server-ssl._tcp.{{ domain_name }} 3600 IN SRV 0 10 2380 etcd-{{ loop.index0 }}.{{ domain_name }}"
 {% endfor %}

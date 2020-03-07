@@ -2,3 +2,6 @@
 # vars file for dhcp
 services:
   - dhcp
+packages:
+  - dhcp-server
+  - python3-netaddr
