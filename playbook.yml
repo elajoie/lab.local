@@ -3,11 +3,13 @@
   hosts: bastion
   vars_files:
     - play_vars.yml
+    - vault
   roles:
-    - unbound
-    - dhcp
-    - ntp
-    - haproxy
+#    - unbound
+#    - dhcp
+#    - ntp
+#    - haproxy
+    - httpd
 
 #- name: KVM Setup
 #  hosts: kvm

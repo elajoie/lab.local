@@ -6,3 +6,6 @@ services:
 
 ports:
   - 8080/tcp
+
+packages:
+  - podman

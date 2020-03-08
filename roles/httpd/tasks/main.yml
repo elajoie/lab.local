@@ -1,16 +1,21 @@
 ---
 # tasks file for httpd
+- name: Install require packages
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+
 - name: Login to registry as podman_image seems to not do this properly
   command: podman login
-    --username "{{ rhn_username }}"
-    --password "{{ rhn_password }}"
+    --username "{{ vault_rhn_username }}"
+    --password "{{ vault_rhn_password }}"
     registry.redhat.io
 
-- name: Download httpd image
+- name: "Download {{ container_name }} image"
   podman_image:
-    name: registry.redhat.io/rhel8/httpd-24
+    name: "registry.redhat.io/{{ container_image }}"
 
-- name: Create folder for httpd
+- name: "Create folder for {{ container_name }}"
   file:
     path: /opt/registry/www/html
     state: directory
@@ -34,22 +39,54 @@
     zone: public
   with_items: "{{ ports }}"
 
-- name: "create systemd service file for container: {{ container_name }}"
-  template:
-    src: systemd-service-single.j2
-    dest: "{{ service_files_dir }}/{{ service_name }}"
-    owner: root
-    group: root
-    mode: 0644
+# https://www.redhat.com/sysadmin/podman-shareable-systemd-services
+
+#Until a block and rescue section is added we just delete any containers withthe same name
+- name: disable httpd
+  systemd:
+    name: "container-{{ container_name }}"
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: remove old systemd files
+  file:
+    path: "/etc/systemd/system/container-{{ container_name }}.service"
+    state: absent
+  ignore_errors: yes
+
+- name: "kill {{ containrer_name }}"
+  command: podman kill
+    {{ container_name }}
+  ignore_errors: yes
+
+- name: "rm {{ containrer_name }}"
+  command: podman rm
+    {{ container_name }}
+  ignore_errors: yes
+
+- name: "create {{ containrer_name }}"
+  command: podman create
+    --name {{ container_name }}
+    --publish 8080:8080
+    --volume /opt/registry/www:/var/www:z
+    {{ container_name }}
+
+- name: "make systemd for {{ container_name }}"
+  command: podman generate
+    systemd
+    --files
+    --name {{ container_name }}
+
+- name: copy systemd file to /etc/systemd/sysytem/
+  copy:
+    src: "/root/container-{{ container_name }}.service"
+    dest: "/etc/systemd/system/container-{{ container_name }}.service"
+    remote_src: yes
   notify: reload systemctl
 
-- name: ensure "{{ service_name }}" is enabled at boot, and systemd reloaded
+- name: restart httpd
   systemd:
-    name: "{{ service_name }}"
+    name: "container-{{ container_name }}"
+    state: restarted
     enabled: yes
-    daemon_reload: yes
-
-- name: ensure "{{ service_name }}" is running
-  service:
-    name: "{{ service_name }}"
-    state: started
