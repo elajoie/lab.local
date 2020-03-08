@@ -1,7 +1,13 @@
 ---
 # handlers file for haproxy
+- name: restart firewalld
+  systemd:
+    name: firewalld
+    state: restarted
+    enabled: yes
+
 - name: restart haproxy
   systemd:
     name: haproxy
-    state: restarted
+    state: started
     enabled: yes

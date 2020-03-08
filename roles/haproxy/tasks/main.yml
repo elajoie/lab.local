@@ -1,42 +1,60 @@
 ---
-- include_vars: vault
-
 - name: install packages
   dnf:
-    name: libguestfs-tools-c
-    state: latest 
+    name: "{{ packages }}"
+    state: latest
 
-- name: copy over rhel qcow2 images
-  copy:
-    src: rhel.qcow2
-    dest: /var/lib/libvirt/images/{{ name0 }}.qcow2
+- name: setup firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"
+  notify: restart firewalld
 
-- name: customize VMs
-  command: virt-customize -a /var/lib/libvirt/images/{{ name0 }}.qcow2
-    --uninstall cloud-init
-    --ssh-inject root:file:/home/elajoie/.ssh/id_rsa.pub
-    --selinux-relabel
-    --sm-credentials "{{ rhn_username }}:password:{{ rhn_password }}"
-    --sm-register
-    --sm-attach auto
-    --install haproxy
+- name: setup firewall rules - ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ ports }}"
+  notify: restart firewalld
 
-- name: deploy VMs
-  command: virt-install
-    --import
-    --name lb
-    --memory 1024
-    --vcpus 1
-    --cpu host
-    --network network=br0,mac={{ mac }}
-    --noreboot
-    --disk /var/lib/libvirt/images/{{ name0 }}.qcow2
-    --noautoconsole
+#https://github.com/linux-system-roles/selinux/blob/master/selinux-playbook.yml
+- name: execute the role and catch errors
+  block:
+    - include_role:
+        name: linux-system-roles.selinux
+  rescue:
+    # Fail if failed for a different reason than selinux_reboot_required.
+    - name: handle errors
+      fail:
+        msg: "selinx port role failed"
+      when: not selinux_reboot_required
+
+    - name: restart managed host
+      shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+      async: 1
+      poll: 0
+      ignore_errors: true
+
+    - name: wait for managed host to come back
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+
+    - name: reapply the role
+      include_role:
+        name: linux-system-roles.selinux
 
 - name: copy over haproxy configuration
   template:
     src: haproxy.conf.j2
     dest: /etc/haproxy/haproxy.cfg
-  notify:
-    - restart haproxy
-
+    owner: haproxy
+    group: haproxy
+  notify: restart haproxy

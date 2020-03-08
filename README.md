@@ -11,3 +11,4 @@ Ansible based install and setup of OCP and other tools for the bastion nodes.
 
 3. create vault file with your vault_rhn_password variable
 
+4. Install rhel-system-roles

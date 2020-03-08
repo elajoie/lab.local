@@ -6,6 +6,8 @@
   roles:
     - unbound
     - dhcp
+    - ntp
+    - haproxy
 
 #- name: KVM Setup
 #  hosts: kvm

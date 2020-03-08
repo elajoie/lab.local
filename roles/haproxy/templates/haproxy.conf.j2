@@ -57,14 +57,14 @@ frontend ssl-apiserver
 backend api_server
     mode tcp
     option ssl-hello-chk
-{% for host in groups['ocpnodes'] %}
+{% for host in groups['ocp'] if hostvars[host]['bootstrap'] is defined or hostvars[host]['etcd_node'] is defined %}
     server {{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}:6443 check
 {% endfor %}
 
 backend api_int_server
     mode tcp
     option ssl-hello-chk
-{% for host in groups['ocpnodes'] %}
+{% for host in groups['ocp'] if hostvars[host]['bootstrap'] is defined or hostvars[host]['etcd_node'] is defined %}
     server {{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}:6443 check
 {% endfor %}
 
@@ -75,12 +75,12 @@ frontend ssl_machineconfig
 
 backend machineconfig
     mode tcp
-{% for host in groups['ocpnodes'] %}
+{% for host in groups['ocp'] if hostvars[host]['bootstrap'] is defined or hostvars[host]['etcd_node'] is defined %}
     server {{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}:22623 check
 {% endfor %}
 
 frontend http
-    bind {{ hostvars[groups['lbs'][0]]['inventory_hostname'] }}.{{ domain_name }}:80
+    bind {{ ansible_hostname }}.{{ domain_name }}:80
     mode tcp
     acl is_openshift_router hdr(host) -m dom .apps.{{ domain_name }}
     use_backend openshift_router_http if is_openshift_router
@@ -88,7 +88,7 @@ frontend http
 
 backend openshift_router_http
     mode tcp
-{% for host in groups['workers'] %}
+{% for host in groups['ocp'] if hostvars[host]['worker'] is defined %}
     server {{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}:80 check
 {% endfor %}
 
@@ -97,7 +97,7 @@ backend bastion_http
     server bastion 127.0.0.1:80
 
 frontend https
-    bind {{ hostvars[groups['lbs'][0]]['inventory_hostname'] }}.{{ domain_name }}:443
+    bind {{ ansible_hostname }}.{{ domain_name }}:443
     mode tcp
     option tcplog
     tcp-request inspect-delay 5s
@@ -107,11 +107,10 @@ frontend https
 
 backend openshift_router_https
     mode tcp
-{% for host in groups['workers'] %}
+{% for host in groups['ocp'] if hostvars[host]['worker'] is defined %}
     server {{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['inventory_hostname'] }}.{{ domain_name }}:443 check
 {% endfor %}
 
 backend bastion_https
     mode tcp
     server bastion 127.0.0.1:443
-

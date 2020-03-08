@@ -2,3 +2,7 @@
 # vars file for ntp
 services:
   - ntp
+net_mask: '{{ ansible_default_ipv4["network"] }}/{{ ansible_default_ipv4["netmask"] }}'
+packages:
+  - python3-netaddr
+  - chrony
