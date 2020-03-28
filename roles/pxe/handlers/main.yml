@@ -1,0 +1,7 @@
+---
+# handlers file for pxe
+- name: restart dhcpd
+  service:
+    name: dhcpd
+    state: restarted
+    enabled: yes

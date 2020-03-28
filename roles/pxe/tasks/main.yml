@@ -1,0 +1,82 @@
+---
+# tasks file for pxe
+- name: Install packages
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+
+- name: setup firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  with_items: "{{ services }}"
+
+- name: Create a directory if it does not exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items: "{{ folders }}"
+
+- name: "Copy over iso file to tftp server - {{ ansible_facts['nodename'] }}"
+  copy:
+    src: "{{ boot_iso }}"
+    dest: "/tmp/{{ boot_iso }}"
+
+- name: Mount boot iso read-only
+  mount:
+    path: "{{ mount_point }}"
+    src: "/tmp/{{ boot_iso }}"
+    fstype: iso9660
+    opts: ro,noauto
+    state: mounted
+
+- name: Copy over files for repos
+  copy:
+    remote_src: yes
+    src: "{{ mount_point }}/"
+    dest: "/opt/registry/www/html/{{ rhel_version }}/"
+
+- name: Copy over files for EFI
+  copy:
+    remote_src: yes
+    src: "{{ efi_dir }}{{ item }}"
+    dest: "/var/lib/tftpboot/uefi/{{ item }}"
+  with_items: "{{ efifiles }}"
+
+- name: Copy over files for booting
+  copy:
+    remote_src: yes
+    src: "{{ boot_dir }}{{ item }}"
+    dest: "/var/lib/tftpboot/images/{{ rhel_version}}/{{ item }}"
+  with_items: "{{ bootfiles }}"
+
+- name: Template a file for kickstart onto tftp server
+  template:
+    src: ks.cfg.j2
+    dest: /opt/registry/www/html/kickstarts/ks.cfg
+
+- name: Template a file for grub menu onto tftp server
+  template:
+    src: grub.cfg.j2
+    dest: "{{ tftp_dir }}/uefi/grub.cfg"
+
+- name: Copy over new dhcp configuration supporting PXE
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  notify: restart dhcpd
+
+- name: Start and ebable TFTP and xinetd service
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: "{{ systemd_services }}"
+
+- name: Unmount boot iso
+  mount:
+    path: "{{ mount_point }}"
+    state: absent

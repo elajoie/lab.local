@@ -5,11 +5,12 @@
     - play_vars.yml
     - vault
   roles:
-    - unbound
-    - dhcp
-    - ntp
-    - haproxy
+  #  - unbound
+  #  - dhcp
+  #  - ntp
+  #  - haproxy
     - httpd
+    - pxe
 
 #- name: KVM Setup
 #  hosts: kvm

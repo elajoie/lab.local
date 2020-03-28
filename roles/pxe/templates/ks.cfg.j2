@@ -1,0 +1,13 @@
+ignoredisk --only-use=nvme0n1
+clearpart --all --initlabel --drives=nvme0n1
+graphical
+lang en_US.UTF-8
+keyboard us
+rootpw {{ vault_rootpasswd }}
+timezone UTC
+zerombr
+autopart --nohome
+rhsm --organization="{{ vault_orgid }}" --activation-key="{{ vault_actkey }}"
+%packages
+@^minimal-environment
+%end

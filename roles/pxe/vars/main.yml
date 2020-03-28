@@ -1,0 +1,26 @@
+---
+# vars file for pxe
+mount_point: /tmp/iso
+efi_dir: "{{ mount_point }}/EFI/BOOT/"
+boot_dir: "{{ mount_point }}/images/pxeboot/"
+services:
+  - tftp
+packages:
+  - tftp-server
+  - dhcp-server
+  - xinetd
+efifiles:
+  - BOOTX64.EFI
+  - grubx64.efi
+bootfiles:
+  - initrd.img
+  - vmlinuz
+tftp_dir: /var/lib/tftpboot
+folders:
+  - "{{ tftp_dir }}/uefi"
+  - "{{ tftp_dir }}/images/{{ rhel_version }}"
+  - /opt/registry/www/html/kickstarts
+  - "/opt/registry/www/html/{{ rhel_version }}"
+systemd_services:
+  - tftp.service
+  - xinetd.service
