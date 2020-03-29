@@ -12,6 +12,7 @@ timezone UTC
 zerombr
 autopart --nohome
 rhsm --organization="{{ vault_orgid }}" --activation-key="{{ vault_actkey }}"
+reboot
 %packages
 @^minimal-environment
 %end

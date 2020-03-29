@@ -10,7 +10,8 @@
   #  - ntp
   #  - haproxy
   #  - httpd
-    - pxe
+  #  - pxe
+    - redfish
 
 #- name: KVM Setup
 #  hosts: kvm

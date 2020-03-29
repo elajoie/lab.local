@@ -7,3 +7,5 @@ You also need to update your vualt file with vault_orgid, vault_actkey which you
 https://access.redhat.com/management/activation_keys
 
 You will also want to set your root password in your vault as vault_rootpasswd
+
+make sure your inventory nodes in group kvm have a "kvm=true" setting if you want them to have a customer kickstarts
