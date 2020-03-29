@@ -9,7 +9,7 @@
   #  - dhcp
   #  - ntp
   #  - haproxy
-    - httpd
+  #  - httpd
     - pxe
 
 #- name: KVM Setup

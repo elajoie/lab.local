@@ -63,6 +63,20 @@
     src: grub.cfg.j2
     dest: "{{ tftp_dir }}/uefi/grub.cfg"
 
+- name: Template a file for custom kickstart onto tftp server
+  template:
+    src: ks.cfg-mac.j2
+    dest: "/opt/registry/www/html/kickstarts/ks.cfg-{{ hostvars[item]['ethernet'] | hwaddr('eui48') }}"
+  with_items: "{{ groups['kvm'] }}"
+  when: hostvars[item]['kvm'] == 'true'
+
+- name: Template a file for custom grub menu onto tftp server
+  template:
+    src: grub.cfg-mac.j2
+    dest: "{{ tftp_dir }}/uefi/grub.cfg-{{ hostvars[item]['ethernet'] | hwaddr('eui48') }}"
+  with_items: "{{ groups['kvm'] }}"
+  when: hostvars[item]['kvm'] == 'true'
+
 - name: Copy over new dhcp configuration supporting PXE
   template:
     src: dhcpd.conf.j2
