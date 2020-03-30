@@ -1,5 +1,5 @@
 ---
-- name: Bastion Setup (basically install the roles for rhel-system)
+- name: Bastion Setup plus PXE boot kvm node/s
   hosts: bastion
   vars_files:
     - play_vars.yml
@@ -10,8 +10,8 @@
   #  - ntp
   #  - haproxy
   #  - httpd
-  #  - pxe
-    - redfish
+    - pxe
+  #  - redfish
 
 #- name: KVM Setup
 #  hosts: kvm
@@ -19,13 +19,9 @@
 #    - vault
 #    - play_vars.yml
 #    - rhel-system-roles-networking.yml
-#    - vm_data.yml
 #  roles:
 #    - packages
 #    - rhel-system-roles.network
 #    - networking
-#    - dhcp
-#    - unbound
-#    - ntp
-#    - httpd
 #    - rhcos
+#  when: hostvars[host]['kvm'] == 'true'

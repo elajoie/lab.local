@@ -1,6 +1,7 @@
 ---
-# vars file for unbound
-pkg:
+# vars file for packages
+packages:
   - "@Virtualization Host"
   - python3-libvirt
   - python3-lxml
+  - rhel-system-roles

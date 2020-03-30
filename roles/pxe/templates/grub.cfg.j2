@@ -1,5 +1,5 @@
 set timeout=60
 menuentry '{{ rhel_version }} with CDN' {
-  linuxefi images/{{ rhel_version }}/vmlinuz ip=dhcp inst.repo=http://{{ ansible_default_ipv4["address"] }}:8080/{{ rhel_version }}/  inst.ks=http://{{ ansible_default_ipv4["address"] }}:8080/kickstarts/ks.cfg
+  linuxefi images/{{ rhel_version }}/vmlinuz ip=dhcp inst.repo=http://{{ ansible_default_ipv4["address"] }}:8080/{{ rhel_version }}  inst.ks=http://{{ ansible_default_ipv4["address"] }}:8080/kickstarts/ks.cfg
   initrdefi images/{{ rhel_version }}/initrd.img
 }

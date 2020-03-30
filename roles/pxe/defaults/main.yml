@@ -1,4 +1,4 @@
 ---
 # defaults file for pxe
-boot_iso: rhel-8.2-beta-1-x86_64-dvd.iso
+boot_iso: rhel-8.2-snapshot-3-x86_64-boot.iso
 rhel_version: RHEL-8.2

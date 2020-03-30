@@ -1,12 +1,11 @@
-bridge_int: enp7s0
 network_connections:
   - name: br0
     type: bridge
     ip:
       dhcp4: no
       auto6: no
-  - name: "br0-{{ bridge_int }}"
+  - name: "br0-{{ bridge_nic }}"
     type: ethernet
-    interface_name: "{{ bridge_int }}"
+    interface_name: "{{ bridge_nic }}"
     master: br0
     slave_type: bridge

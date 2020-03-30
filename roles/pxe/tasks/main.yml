@@ -36,7 +36,7 @@
 - name: Copy over files for repos
   copy:
     remote_src: yes
-    src: "{{ mount_point }}/"
+    src: "{{ mount_point }}/images"
     dest: "/opt/registry/www/html/{{ rhel_version }}/"
 
 - name: Copy over files for EFI
@@ -66,14 +66,14 @@
 - name: Template a file for custom kickstart onto tftp server
   template:
     src: ks.cfg-mac.j2
-    dest: "/opt/registry/www/html/kickstarts/ks.cfg-{{ hostvars[item]['ethernet'] | hwaddr('eui48') }}"
+    dest: "/opt/registry/www/html/kickstarts/ks.cfg-01-{{ hostvars[item]['ethernet'] | hwaddr('eui48') | lower }}"
   with_items: "{{ groups['kvm'] }}"
   when: hostvars[item]['kvm'] == 'true'
 
 - name: Template a file for custom grub menu onto tftp server
   template:
     src: grub.cfg-mac.j2
-    dest: "{{ tftp_dir }}/uefi/grub.cfg-{{ hostvars[item]['ethernet'] | hwaddr('eui48') }}"
+    dest: "{{ tftp_dir }}/uefi/grub.cfg-01-{{ hostvars[item]['ethernet'] | hwaddr('eui48') | lower }}"
   with_items: "{{ groups['kvm'] }}"
   when: hostvars[item]['kvm'] == 'true'
 
