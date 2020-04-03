@@ -1,6 +1,6 @@
 ---
 - name: Bastion Setup plus PXE boot kvm node/s
-  hosts: bastion
+  hosts: bastions
   vars_files:
     - play_vars.yml
     - vault
@@ -10,18 +10,24 @@
   #  - ntp
   #  - haproxy
   #  - httpd
-    - pxe
+  #  - pxe
   #  - redfish
 
-#- name: KVM Setup
-#  hosts: kvm
-#  vars_files:
-#    - vault
-#    - play_vars.yml
-#    - rhel-system-roles-networking.yml
-#  roles:
-#    - packages
-#    - rhel-system-roles.network
-#    - networking
-#    - rhcos
-#  when: hostvars[host]['kvm'] == 'true'
+- name: KVM Setup
+  hosts: kvm
+  vars_files:
+    - vault
+    - play_vars.yml
+    - rhel-system-roles-networking.yml
+  roles:
+    #- packages
+    # On a RHEL system this would be rhel-system-roles.networking
+    #- linux-system-roles.network
+
+- name: Install OCP installer and client plus pull secret
+  hosts: bastions
+  vars_files:
+    - play_vars.yml
+    - vault
+  roles:
+    - ocp-prep

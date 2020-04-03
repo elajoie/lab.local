@@ -11,7 +11,7 @@ worker01 ansible_host=192.168.1.15 ethernet="52:54:00:39:7c:c5" kvm_host=kvm01 w
 worker02 ansible_host=192.168.1.16 ethernet="52:54:00:39:8c:c5" kvm_host=kvm01 worker="true"
 worker03 ansible_host=192.168.1.17 ethernet="52:54:00:39:9c:c5" kvm_host=kvm01 worker="true"
 
-[bastion]
+[bastions]
 bastion ansible_host=192.168.1.9 ethernet="b4:2e:99:b1:f0:2b"
 
 [storage]

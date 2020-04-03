@@ -2,7 +2,7 @@ ignoredisk --only-use=nvme0n1
 clearpart --all --initlabel --drives=nvme0n1
 graphical
 lang en_US.UTF-8
-
+sshkey  --username=root "{{ vault_sshkey }}"
 network --bootproto=static --ip={{ hostvars[item]['ansible_host'] }} --netmask={{ ansible_default_ipv4['netmask'] }} --gateway={{ ansible_default_ipv4['gateway'] }} --nameserver={{ ansible_default_ipv4["address"] }} --device={{ hostvars[item]['pxe_nic'] }} --ipv6=auto --activate
 network --device={{ hostvars[item]['bridge_nic'] }} --no-activate
 network --hostname={{ hostvars[item]['inventory_hostname'] }}.{{ domain_name }}
