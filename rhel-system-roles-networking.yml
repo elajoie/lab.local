@@ -1,9 +1,13 @@
 network_connections:
+  - name: "System {{ bridge_nic }}"
+    persistent_state: absent
+
   - name: br0
     type: bridge
     ip:
-      dhcp4: no
-      auto6: no
+      dhcp4: False
+      auto6: False
+      
   - name: "br0-{{ bridge_nic }}"
     type: ethernet
     interface_name: "{{ bridge_nic }}"

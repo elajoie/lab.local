@@ -1,0 +1,14 @@
+---
+# defaults file for ocp-prep
+folders:
+  - "{{ ign_folder }}"
+  - "{{ ocp_folder }}"
+  - /root/bin
+ign_folder: /opt/registry/www/html/ignition
+ocp_folder: /root/ocp/install
+ocp_installer_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
+ocp_installer: openshift-install-linux.tar.gz
+ocp_client_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
+ocp_client: openshift-client-linux.tar.gz
+ocp_image_url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/
+ocp_image: rhcos-4.3.8-x86_64-metal.x86_64.raw.gz

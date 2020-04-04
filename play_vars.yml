@@ -1,2 +1,4 @@
-domain_name: lab.local
+base_domain: local
+ocp_cluster_name: lab
+domain_name: "{{ ocp_cluster_name }}.{{ base_domain }}"
 ocp_version: 4.3

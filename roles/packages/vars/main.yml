@@ -4,4 +4,3 @@ packages:
   - "@Virtualization Host"
   - python3-libvirt
   - python3-lxml
-  - rhel-system-roles
