@@ -1,0 +1,11 @@
+---
+# vars file for packages
+packages:
+  - "@Virtualization Host"
+  - python3-libvirt
+  - python3-lxml
+  - virt-install
+rhcos_folder: /rhcos-install/
+ocp_image_url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/
+ocp_kernel: rhcos-4.3.8-x86_64-installer-kernel-x86_64
+ocp_ramfs: rhcos-4.3.8-x86_64-installer-initramfs.x86_64.img

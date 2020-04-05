@@ -19,5 +19,5 @@ networking:
   - 172.30.0.0/16
 platform:
   none: {}
-pullSecret: "{{ pull_secret.json | from_json }}"
+pullSecret: '{{ pull_secret.json | tojson | replace(' ', '') | replace('\n', '') }}'
 sshKey: '{{ sshkey.public_key }}'

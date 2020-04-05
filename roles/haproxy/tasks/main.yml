@@ -57,4 +57,8 @@
     dest: /etc/haproxy/haproxy.cfg
     owner: haproxy
     group: haproxy
-  notify: restart haproxy
+
+- name: Force restart of haproxy
+  service:
+    name: haproxy
+    state: restarted

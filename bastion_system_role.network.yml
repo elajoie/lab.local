@@ -1,0 +1,17 @@
+network_connections:
+  - name: "{{ bastion_nic }}"
+    type: ethernet
+    ip:
+      address:
+        - "{{ ansible_host }}/24"
+      gateway4: "192.168.1.1"
+      dns:
+        - 192.168.1.9
+      dns_search:
+        - lab.local
+
+  - name: "{{ bastion_nic }}"
+    state: down
+
+  - name: "{{ bastion_nic }}"
+    state: up

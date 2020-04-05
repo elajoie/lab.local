@@ -1,17 +1,20 @@
 ignoredisk --only-use=nvme0n1
 clearpart --all --initlabel --drives=nvme0n1
+part /boot/efi --fstype=efi --grow --maxsize=200 --size=20
+part / --fstype=xfs --grow
+
 graphical
 lang en_US.UTF-8
 sshkey  --username=root "{{ vault_sshkey }}"
 network --bootproto=static --ip={{ hostvars[item]['ansible_host'] }} --netmask={{ ansible_default_ipv4['netmask'] }} --gateway={{ ansible_default_ipv4['gateway'] }} --nameserver={{ ansible_default_ipv4["address"] }} --device={{ hostvars[item]['pxe_nic'] }} --ipv6=auto --activate
-network --device={{ hostvars[item]['bridge_nic'] }} --no-activate
+network --device={{ hostvars[item]['bridge_nic'] }} --noipv4 --onboot=no --no-activate
 network --hostname={{ hostvars[item]['inventory_hostname'] }}.{{ domain_name }}
 
 keyboard us
 rootpw {{ vault_rootpasswd }}
 timezone UTC
 zerombr
-autopart --nohome
+
 rhsm --organization="{{ vault_orgid }}" --activation-key="{{ vault_actkey }}"
 reboot
 %packages

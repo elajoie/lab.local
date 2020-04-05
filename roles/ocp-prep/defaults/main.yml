@@ -1,14 +1,17 @@
 ---
 # defaults file for ocp-prep
-folders:
+openshift_install_dir: /root/bin/
+ocp_folders:
   - "{{ ign_folder }}"
   - "{{ ocp_folder }}"
   - /root/bin
-ign_folder: /opt/registry/www/html/ignition
+ign_folder: /opt/registry/www/html/ignition/
 ocp_folder: /root/ocp/install
-ocp_installer_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
+ocp_installer_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/
 ocp_installer: openshift-install-linux.tar.gz
-ocp_client_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
+ocp_client_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/
 ocp_client: openshift-client-linux.tar.gz
-ocp_image_url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/
-ocp_image: rhcos-4.3.8-x86_64-metal.x86_64.raw.gz
+ocp_image_url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest-4.4/
+ocp_kernel: rhcos-4.4.0-rc.1-x86_64-installer-kernel-x86_64
+ocp_ramfs: rhcos-4.4.0-rc.1-x86_64-installer-initramfs.x86_64.img
+#ocp raw images in in global variables play_vars.yml

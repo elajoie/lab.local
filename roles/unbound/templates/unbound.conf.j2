@@ -45,7 +45,7 @@ server:
         local-data: "_etcd-server-ssl._tcp.{{ domain_name }} 3600 IN SRV 0 10 2380 etcd-{{ loop.index0 }}.{{ domain_name }}"
 {% endfor %}
 
-{% for host in groups['ocp'] if hostvars[host]['inventory_hostname'] == 'bastion' %}
+{% for host in groups['bastions'] %}
         local-data: "apps.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
         local-data: "api-int.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"
         local-data: "api.{{ domain_name }} IN A {{ hostvars[host]['ansible_host'] }}"

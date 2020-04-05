@@ -1,0 +1,18 @@
+---
+- name: Bastion Setup plus PXE boot kvm node/s
+  hosts: bastions
+  vars_files:
+    - play_vars.yml
+    - vault
+    - bastion_system_role.network.yml
+  roles:
+    - unbound
+    - rhel-system-roles.network
+    - dhcp
+    - ntp
+    - haproxy
+    - httpd
+    - pxe
+    # Use the redfish plugin to power-off/setPXE/power-on
+    #- redfish
+    - ocp-prep

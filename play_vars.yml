@@ -1,4 +1,6 @@
 base_domain: local
 ocp_cluster_name: lab
 domain_name: "{{ ocp_cluster_name }}.{{ base_domain }}"
-ocp_version: 4.3
+ocp_version: 4.4
+bridge: br0
+ocp_image: rhcos-4.4.0-rc.1-x86_64-metal.x86_64.raw.gz
