@@ -1,11 +1,11 @@
 apiVersion: v1
 baseDomain: {{ base_domain }}
 compute:
-- hyperthreading: Disabled
+- hyperthreading: Enabled
   name: worker
-  replicas: 0
+  replicas: 3
 controlPlane:
-  hyperthreading: Disabled
+  hyperthreading: Enabled
   name: master
   replicas: 3
 metadata:
