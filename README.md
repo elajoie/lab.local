@@ -1,5 +1,5 @@
 # Ansible-Lab to learn Ansible while installing OCP via UPI
-This document is intended for SAs and SSAs who are moving from OpenStack experience towards a focus on OKE/OCP. All tasks are done in Ansible from a laptop.
+This document is intended for folks who want to learn ansible basics and how to install Red hat Openshift on KVM for training purposes or demo.
 
 ![Lab Diagram](Demo%20Basics.jpg)
 
@@ -44,3 +44,5 @@ In this section you will set up the bastion which is used to stage many network 
 1. oc get nodes
 1. oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
 1. oc get clusterversion; echo; oc get clusteroperators 
+1. Do this command untill all the CRSs are approved and you see all your workers.
+oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
