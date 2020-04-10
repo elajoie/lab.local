@@ -21,6 +21,14 @@
       Authorization: Bearer {{ access_tokens.json.access_token }}
   register: pull_secret
 
+- name: Delete old directory for OCP install
+  file:
+    path: "{{ item }}"
+    state: absent
+    mode: '0755'
+  loop: "{{ ocp_folders }}"
+  ignore_errors: yes
+
 - name: Create a directory for OCP install
   file:
     path: "{{ item }}"

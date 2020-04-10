@@ -1,0 +1,5 @@
+---
+- name: setup osp nodes to support iscsi
+  hosts: ocp
+  roles:
+    - iscsi

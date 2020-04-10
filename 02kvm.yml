@@ -6,7 +6,7 @@
     - play_vars.yml
     - kvm-system-roles-network.yml
   roles:
-    - packages_and_bridge
+    #- packages_and_bridge
 # On a RHEL system this would be rhel-system-roles.networking
-    - rhel-system-roles.network
+    #- rhel-system-roles.network
     - createVMs
